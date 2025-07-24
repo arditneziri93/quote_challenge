@@ -1,23 +1,42 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
-import { Quote } from './quote.entity';
-import { QuoteRepository } from './quote.repository';
+import { Injectable } from '@nestjs/common';
+import { Quote } from '../entity/quote.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
-export class QuotesService implements OnModuleInit {
+export class QuotesService {
   private quotes: Quote[] = [];
 
-  constructor(private readonly repo: QuoteRepository) {}
+  constructor(
+    @InjectRepository(Quote)
+    private repo: Repository<Quote>,
+  ) {}
 
-  async onModuleInit() {
-    this.quotes = await this.repo.loadAll();
+  async findAll(): Promise<Quote[]> {
+    return this.repo.find();
   }
 
-  findAll(): Quote[] {
-    return this.quotes;
+  async findRandom(): Promise<Quote> {
+    const quotes = await this.repo.find();
+    const index = Math.floor(Math.random() * quotes.length);
+    return quotes[index];
   }
 
-  findRandom(): Quote {
-    const index = Math.floor(Math.random() * this.quotes.length);
-    return this.quotes[index];
+  async findOne(id: number): Promise<Quote | undefined> {
+    return await this.repo.findOneById(id);
+  }
+
+  async create(user: Partial<Quote>): Promise<Quote> {
+    const newQuote = this.repo.create(user); // Creates a new entity instance (not yet saved to DB)
+    return this.repo.save(newQuote); // Saves the instance to the database
+  }
+
+  async update(id: number, user: Partial<Quote>): Promise<Quote | undefined> {
+    await this.repo.update(id, user); // Updates by ID directly
+    return this.repo.findOne({ where: { id } }); // Returns the updated user
+  }
+
+  async remove(id: number): Promise<void> {
+    await this.repo.delete(id); // Deletes by ID
   }
 }

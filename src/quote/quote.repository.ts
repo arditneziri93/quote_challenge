@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
-import { Quote } from './quote.entity';
+import { Quote } from '../entity/quote.entity';
 
 const PATH = path.join(__dirname, '../quote/quotes.json');
 

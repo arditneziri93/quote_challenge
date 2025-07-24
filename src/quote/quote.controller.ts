@@ -1,13 +1,22 @@
-import { Controller, Get } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { QuotesService } from './quote.service';
+import { Quote } from '../entity/quote.entity';
 
-@Controller('/')
+@Controller()
 export class QuotesController {
   constructor(private readonly quotesService: QuotesService) {}
 
   @Get('/all')
-  findAll(): string {
-    const quotes = this.quotesService.findAll();
+  async findAll(): Promise<string> {
+    const quotes = await this.quotesService.findAll();
     return `<div style="
     display: flex;
     flex-direction: column;
@@ -30,8 +39,8 @@ export class QuotesController {
   }
 
   @Get('/')
-  findRandom(): string {
-    const quote = this.quotesService.findRandom();
+  async findRandom(): Promise<string> {
+    const q = await this.quotesService.findRandom();
     return `
     <div style="
       display: flex;
@@ -47,9 +56,29 @@ export class QuotesController {
       color: white;
       padding: 2rem;
     ">
-      <h1>${quote.quote}</h1>
-      <p>– ${quote.author}</p>
+      <h1>${q.quote}</h1>
+      <p>– ${q.author}</p>
     </div>
   `;
+  }
+
+  @Get('/single-quote/:id')
+  async findOne(@Param('id') id: string): Promise<Quote> {
+    return await this.quotesService.findOne(+id);
+  }
+
+  @Post('/add-quote')
+  create(@Body() quote: Quote): Promise<Quote> {
+    return this.quotesService.create(quote);
+  }
+
+  @Put('/update-quote/:id')
+  update(@Param('id') id: string, @Body() quote: Quote): Promise<Quote> {
+    return this.quotesService.update(+id, quote);
+  }
+
+  @Delete('/delete-quote/:id')
+  remove(@Param('id') id: string): Promise<void> {
+    return this.quotesService.remove(+id);
   }
 }
