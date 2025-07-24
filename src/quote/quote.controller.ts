@@ -3,9 +3,11 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   Post,
   Put,
+  Res
 } from '@nestjs/common';
 import { QuotesService } from './quote.service';
 import { Quote } from '../entity/quote.entity';
@@ -64,7 +66,11 @@ export class QuotesController {
 
   @Get('/single-quote/:id')
   async findOne(@Param('id') id: string): Promise<Quote> {
+    try {
     return await this.quotesService.findOne(+id);
+    } catch (error) {
+      throw new NotFoundException('404');
+    }
   }
 
   @Post('/add-quote')
