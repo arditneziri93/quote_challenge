@@ -23,7 +23,10 @@ export class QuotesService {
   }
 
   async findOne(id: number): Promise<Quote | undefined> {
-    return await this.repo.findOneById(id);
+    const result = await this.repo.findOneById(id);
+    console.log(result);
+    if(typeof result === 'undefined') throw Error('notfound');
+    return result;
   }
 
   async create(user: Partial<Quote>): Promise<Quote> {

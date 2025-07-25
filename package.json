@@ -8,8 +8,8 @@
   "scripts": {
     "build": "nest build && npm run copy-assets",
     "copy-assets": "copyfiles -u 1 src/**/*.json dist/",
-    "start": "npm run build && node dist/main",
-    "start:dev": "npm run build && nest start --watch",
+    "start": "nest build && node dist/main",
+    "start:dev": "nest build && nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
