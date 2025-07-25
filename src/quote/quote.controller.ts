@@ -18,8 +18,11 @@ export class QuotesController {
   constructor(private readonly quotesService: QuotesService) {}
 
   @Get('/all')
-  async findAll(@Query('page',new  ParseIntPipe({ optional: true })) page?: number): Promise<Quote[]> {
-    const quotes = await this.quotesService.findAll(page);
+  async findAll(
+    @Query('page',new  ParseIntPipe({ optional: true })) page?: number,
+    @Query('pageSize',new  ParseIntPipe({ optional: true })) pageSize?: number
+  ): Promise<Quote[]> {
+    const quotes = await this.quotesService.findAll(page, pageSize);
     return quotes;
   }
 

@@ -12,13 +12,13 @@ export class QuotesService {
     private repo: Repository<Quote>,
   ) {}
 
-  async findAll(page?: number): Promise<Quote[]> {
+  async findAll(page?: number,pageSize?: number): Promise<Quote[]> {
     const realPage = page ?? 1;
-    const pageSize = 2;
-    const skip = pageSize * (realPage - 1);
+    const realPageSize = pageSize ?? 10;
+    const skip = realPageSize * (realPage - 1);
     return this.repo.find({
       skip,
-      take: pageSize
+      take: realPageSize
     });
   }
 
