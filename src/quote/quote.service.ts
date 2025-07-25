@@ -1,11 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { HttpCode, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { Quote } from '../entity/quote.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class QuotesService {
-  private quotes: Quote[] = [];
 
   constructor(
     @InjectRepository(Quote)
@@ -41,8 +40,7 @@ export class QuotesService {
   }
 
   async findOne(id: number): Promise<Quote | undefined> {
-    const result = await this.repo.findOneById(id);
-    console.log(result);
+    const result = await this.repo.findOne({ where: { id } });
     if (!result) throw Error('notfound');
     return result;
   }
@@ -57,7 +55,11 @@ export class QuotesService {
     return this.repo.findOne({ where: { id } }); // Returns the updated user
   }
 
+  @HttpCode(HttpStatus.NO_CONTENT)
   async remove(id: number): Promise<void> {
-    await this.repo.delete(id); // Deletes by ID
+    const removed = await this.repo.delete(id); // Deletes by ID
+    if (!removed) {
+      throw new NotFoundException(`Quote with ID "${id}" not found`);
+    }
   }
 }

@@ -1,8 +1,11 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   NotFoundException,
   Param,
   ParseBoolPipe,
@@ -14,11 +17,11 @@ import {
 import { QuotesService } from './quote.service';
 import { Quote } from '../entity/quote.entity';
 
-@Controller()
+@Controller('quotes')
 export class QuotesController {
   constructor(private readonly quotesService: QuotesService) {}
 
-  @Get('/all')
+  @Get('/')
   async findAll(
     @Query('page',new  ParseIntPipe({ optional: true })) page?: number,
     @Query('pageSize',new  ParseIntPipe({ optional: true })) pageSize?: number,
@@ -33,7 +36,7 @@ export class QuotesController {
     return quotes;
   }
 
-  @Get('/single-quote/:id')
+  @Get('/:id')
   async findOne(@Param('id') id: string): Promise<Quote> {
     try {
       return await this.quotesService.findOne(+id);
@@ -43,18 +46,23 @@ export class QuotesController {
     }
   }
 
-  @Post('/add-quote')
-  create(@Body() quote: Quote): Promise<Quote> {
+  @Post('/')
+  create(@Body() quote: Quote): Promise<Quote> { 
+    if(quote.id || quote.id === 0){
+      throw new BadRequestException('400');
+    }
     return this.quotesService.create(quote);
   }
 
-  @Put('/update-quote/:id')
+  @Put('/:id')
   update(@Param('id') id: string, @Body() quote: Quote): Promise<Quote> {
     return this.quotesService.update(+id, quote);
   }
 
-  @Delete('/delete-quote/:id')
-  remove(@Param('id') id: string): Promise<void> {
-    return this.quotesService.remove(+id);
+  @Delete('/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async remove(@Param('id') id: string): Promise<void> {
+    
+    const result = await this.quotesService.remove(+id);
   }
 }
