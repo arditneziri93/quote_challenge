@@ -22,10 +22,22 @@ export class QuotesService {
     });
   }
 
-  async findRandom(): Promise<Quote> {
+  async findRandom(pageSize?: number): Promise<Quote[]> {
+    const realPageSize = pageSize ?? 1;
     const quotes = await this.repo.find();
-    const index = Math.floor(Math.random() * quotes.length);
-    return quotes[index];
+    const RealQuotes = this.shuffle(quotes);
+    return RealQuotes.slice(0, realPageSize);
+  }
+
+  private shuffle(quotes: Quote[]){
+    let index = quotes.length, j, temp;
+    while(--index > 0){
+        j = Math.floor(Math.random() * (index + 1));
+        temp = quotes[j];
+        quotes[j] = quotes[index];
+        quotes[index] = temp;
+    }
+    return quotes;
   }
 
   async findOne(id: number): Promise<Quote | undefined> {

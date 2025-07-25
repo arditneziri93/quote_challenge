@@ -5,6 +5,7 @@ import {
   Get,
   NotFoundException,
   Param,
+  ParseBoolPipe,
   ParseIntPipe,
   Post,
   Put,
@@ -20,16 +21,16 @@ export class QuotesController {
   @Get('/all')
   async findAll(
     @Query('page',new  ParseIntPipe({ optional: true })) page?: number,
-    @Query('pageSize',new  ParseIntPipe({ optional: true })) pageSize?: number
+    @Query('pageSize',new  ParseIntPipe({ optional: true })) pageSize?: number,
+    @Query('randomized', new ParseBoolPipe({optional: true})) randomize?: boolean
   ): Promise<Quote[]> {
-    const quotes = await this.quotesService.findAll(page, pageSize);
+    let quotes;
+    if(randomize) {
+     quotes = await this.quotesService.findRandom();
+    } else {
+     quotes = await this.quotesService.findAll(page, pageSize);
+    }
     return quotes;
-  }
-
-  @Get('/')
-  async findRandom(): Promise<Quote> {
-    const randomQuote = await this.quotesService.findRandom();
-    return randomQuote;
   }
 
   @Get('/single-quote/:id')
