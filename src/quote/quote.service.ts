@@ -12,8 +12,14 @@ export class QuotesService {
     private repo: Repository<Quote>,
   ) {}
 
-  async findAll(): Promise<Quote[]> {
-    return this.repo.find();
+  async findAll(page?: number): Promise<Quote[]> {
+    const realPage = page ?? 1;
+    const pageSize = 2;
+    const skip = pageSize * (realPage - 1);
+    return this.repo.find({
+      skip,
+      take: pageSize
+    });
   }
 
   async findRandom(): Promise<Quote> {
