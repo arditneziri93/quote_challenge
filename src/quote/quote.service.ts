@@ -25,7 +25,7 @@ export class QuotesService {
   async findOne(id: number): Promise<Quote | undefined> {
     const result = await this.repo.findOneById(id);
     console.log(result);
-    if(typeof result === 'undefined') throw Error('notfound');
+    if (!result) throw Error('notfound');
     return result;
   }
 
