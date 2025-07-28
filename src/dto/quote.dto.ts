@@ -3,11 +3,9 @@ import { Expose } from 'class-transformer';
 
 export class QuoteRequestDto {
   @IsString()
-  @Expose()
   quote: string;
 
   @IsString()
-  @Expose()
   author: string;
 }
 

@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common';
 /*
 import * as fs from 'fs/promises';
 import * as path from 'path';
@@ -9,6 +10,15 @@ import { Quote } from './entity/quote.entity';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // Applies ValidationPipe globally
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
   /*
   const quotesService = app.get(QuotesService);
   console.log('✅ Bootstrapping...');

@@ -51,9 +51,13 @@ export class QuotesService {
     return this.repo.save(newQuote); // Saves the instance to the database
   }
 
-  async update(id: number, user: Partial<Quote>): Promise<Quote | undefined> {
-    await this.repo.update(id, user); // Updates by ID directly
-    return this.repo.findOne({ where: { id } }); // Returns the updated user
+  async update(id: number, quote: Partial<Quote>): Promise<Quote | undefined> {
+    await this.repo.update(id, quote); // Updates by ID directly
+    const updated = await this.repo.findOne({ where: { id } });
+
+    if (!updated) throw Error('notfound');
+
+    return updated;
   }
 
   // Deletes by ID
