@@ -16,6 +16,7 @@ import {
 import { QuotesService } from './quote.service';
 import { Quote } from '../entity/quote.entity';
 import { QuoteRequestDto, QuoteResponseDto } from '../dto/quote.dto';
+import { plainToInstance } from 'class-transformer';
 
 @Controller('quotes')
 export class QuotesController {
@@ -36,11 +37,9 @@ export class QuotesController {
     }
     const responseQuotes: QuoteResponseDto[] = [];
     for (const quote of quotes) {
-      const responseQuote = new QuoteResponseDto(
-        quote.id,
-        quote.quote,
-        quote.author,
-      );
+      const responseQuote = plainToInstance(QuoteResponseDto, quote, {
+        strategy: 'excludeAll',
+      });
       responseQuotes.push(responseQuote);
     }
     return responseQuotes;
@@ -50,38 +49,43 @@ export class QuotesController {
   async findOne(@Param('id') id: string): Promise<QuoteResponseDto> {
     try {
       const quote = await this.quotesService.findOne(+id);
-      const responseQuote = new QuoteResponseDto(
-        quote.id,
-        quote.quote,
-        quote.author,
-      );
+      const responseQuote = plainToInstance(QuoteResponseDto, quote, {
+        strategy: 'excludeAll',
+      });
       return responseQuote;
     } catch (error) {
-      throw new NotFoundException('404');
       console.log(error);
+      throw new NotFoundException('404');
     }
   }
 
   @Post('/')
-  create(@Body() dto: QuoteRequestDto): Promise<Quote> {
-    return this.quotesService.create(dto);
+  async create(@Body() dto: QuoteRequestDto): Promise<QuoteResponseDto> {
+    const quote = await this.quotesService.create(dto);
+    const responseQuote = plainToInstance(QuoteResponseDto, quote, {
+      strategy: 'excludeAll',
+    });
+    return responseQuote;
   }
 
   @Put('/:id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() dto: QuoteRequestDto,
-  ): Promise<Quote> {
-    return this.quotesService.update(+id, dto);
+  ): Promise<QuoteResponseDto> {
+    const quote = await this.quotesService.update(+id, dto);
+    const responseQuote = plainToInstance(QuoteResponseDto, quote, {
+      strategy: 'excludeAll',
+    });
+    return responseQuote;
   }
 
   @Delete('/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id') id: string): Promise<string> {
+  async remove(@Param('id') id: string): Promise<void> {
     const removed = await this.quotesService.remove(+id);
     if (!removed) {
       throw new NotFoundException(`Quote with ID "${id}" not found`);
     }
-    return '{}';
   }
 }
