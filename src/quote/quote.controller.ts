@@ -15,7 +15,7 @@ import {
 } from '@nestjs/common';
 import { QuotesService } from './quote.service';
 import { Quote } from '../entity/quote.entity';
-import { QuoteRequestDto } from '../dto/quote.dto';
+import { QuoteRequestDto, QuoteResponseDto } from '../dto/quote.dto';
 
 @Controller('quotes')
 export class QuotesController {
@@ -27,20 +27,35 @@ export class QuotesController {
     @Query('pageSize', new ParseIntPipe({ optional: true })) pageSize?: number,
     @Query('randomized', new ParseBoolPipe({ optional: true }))
     randomize?: boolean,
-  ): Promise<Quote[]> {
-    let quotes;
+  ): Promise<QuoteResponseDto[]> {
+    let quotes: Quote[] = [];
     if (randomize) {
       quotes = await this.quotesService.findRandom();
     } else {
       quotes = await this.quotesService.findAll(page, pageSize);
     }
-    return quotes as Quote[];
+    const responseQuotes: QuoteResponseDto[] = [];
+    for (const quote of quotes) {
+      const responseQuote = new QuoteResponseDto(
+        quote.id,
+        quote.quote,
+        quote.author,
+      );
+      responseQuotes.push(responseQuote);
+    }
+    return responseQuotes;
   }
 
   @Get('/:id')
-  async findOne(@Param('id') id: string): Promise<Quote> {
+  async findOne(@Param('id') id: string): Promise<QuoteResponseDto> {
     try {
-      return await this.quotesService.findOne(+id);
+      const quote = await this.quotesService.findOne(+id);
+      const responseQuote = new QuoteResponseDto(
+        quote.id,
+        quote.quote,
+        quote.author,
+      );
+      return responseQuote;
     } catch (error) {
       throw new NotFoundException('404');
       console.log(error);
