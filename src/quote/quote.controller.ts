@@ -62,10 +62,11 @@ export class QuotesController {
 
   @Delete('/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id') id: string): Promise<void> {
+  async remove(@Param('id') id: string): Promise<string> {
     const removed = await this.quotesService.remove(+id);
     if (!removed) {
       throw new NotFoundException(`Quote with ID "${id}" not found`);
     }
+    return '{}';
   }
 }

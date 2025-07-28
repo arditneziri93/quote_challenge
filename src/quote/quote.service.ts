@@ -56,16 +56,12 @@ export class QuotesService {
     return this.repo.findOne({ where: { id } }); // Returns the updated user
   }
 
-  // @HttpCode(HttpStatus.NO_CONTENT)
+  // Deletes by ID
   async remove(id: number): Promise<boolean> {
-    console.log('Starting delete process');
     const deleted = await this.repo.delete(id);
-    console.log(deleted);
-    if (deleted !== null || deleted !== undefined) {
+     if (deleted.affected > 0) {
       return true;
     }
-
     return false;
-    // Deletes by ID
   }
 }
