@@ -1,23 +1,22 @@
-import { HttpCode, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Quote } from '../entity/quote.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class QuotesService {
-
   constructor(
     @InjectRepository(Quote)
     private repo: Repository<Quote>,
   ) {}
 
-  async findAll(page?: number,pageSize?: number): Promise<Quote[]> {
+  async findAll(page?: number, pageSize?: number): Promise<Quote[]> {
     const realPage = page ?? 1;
     const realPageSize = pageSize ?? 10;
     const skip = realPageSize * (realPage - 1);
     return this.repo.find({
       skip,
-      take: realPageSize
+      take: realPageSize,
     });
   }
 
@@ -28,13 +27,15 @@ export class QuotesService {
     return RealQuotes.slice(0, realPageSize);
   }
 
-  private shuffle(quotes: Quote[]){
-    let index = quotes.length, j, temp;
-    while(--index > 0){
-        j = Math.floor(Math.random() * (index + 1));
-        temp = quotes[j];
-        quotes[j] = quotes[index];
-        quotes[index] = temp;
+  private shuffle(quotes: Quote[]) {
+    let index = quotes.length,
+      j: number,
+      temp: Quote;
+    while (--index > 0) {
+      j = Math.floor(Math.random() * (index + 1));
+      temp = quotes[j];
+      quotes[j] = quotes[index];
+      quotes[index] = temp;
     }
     return quotes;
   }
@@ -55,11 +56,16 @@ export class QuotesService {
     return this.repo.findOne({ where: { id } }); // Returns the updated user
   }
 
-  @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(id: number): Promise<void> {
-    const removed = await this.repo.delete(id); // Deletes by ID
-    if (!removed) {
-      throw new NotFoundException(`Quote with ID "${id}" not found`);
+  // @HttpCode(HttpStatus.NO_CONTENT)
+  async remove(id: number): Promise<boolean> {
+    console.log('Starting delete process');
+    const deleted = await this.repo.delete(id);
+    console.log(deleted);
+    if (deleted !== null || deleted !== undefined) {
+      return true;
     }
+
+    return false;
+    // Deletes by ID
   }
 }

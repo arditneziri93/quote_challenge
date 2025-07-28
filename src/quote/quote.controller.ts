@@ -23,17 +23,18 @@ export class QuotesController {
 
   @Get('/')
   async findAll(
-    @Query('page',new  ParseIntPipe({ optional: true })) page?: number,
-    @Query('pageSize',new  ParseIntPipe({ optional: true })) pageSize?: number,
-    @Query('randomized', new ParseBoolPipe({optional: true})) randomize?: boolean
+    @Query('page', new ParseIntPipe({ optional: true })) page?: number,
+    @Query('pageSize', new ParseIntPipe({ optional: true })) pageSize?: number,
+    @Query('randomized', new ParseBoolPipe({ optional: true }))
+    randomize?: boolean,
   ): Promise<Quote[]> {
     let quotes;
-    if(randomize) {
-     quotes = await this.quotesService.findRandom();
+    if (randomize) {
+      quotes = await this.quotesService.findRandom();
     } else {
-     quotes = await this.quotesService.findAll(page, pageSize);
+      quotes = await this.quotesService.findAll(page, pageSize);
     }
-    return quotes;
+    return quotes as Quote[];
   }
 
   @Get('/:id')
@@ -47,8 +48,8 @@ export class QuotesController {
   }
 
   @Post('/')
-  create(@Body() quote: Quote): Promise<Quote> { 
-    if(quote.id || quote.id === 0){
+  create(@Body() quote: Quote): Promise<Quote> {
+    if (quote.id || quote.id === 0) {
       throw new BadRequestException('400');
     }
     return this.quotesService.create(quote);
@@ -62,7 +63,9 @@ export class QuotesController {
   @Delete('/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id') id: string): Promise<void> {
-    
-    const result = await this.quotesService.remove(+id);
+    const removed = await this.quotesService.remove(+id);
+    if (!removed) {
+      throw new NotFoundException(`Quote with ID "${id}" not found`);
+    }
   }
 }
