@@ -16,6 +16,7 @@ import {
 import { UsersService } from './user.service';
 import { User } from '../entity/user.entity';
 import { UserRequestDto, UserResponseDto } from '../dto/user.dto';
+import { plainToInstance } from 'class-transformer';
 
 @Controller('users')
 export class UsersController {
@@ -36,7 +37,9 @@ export class UsersController {
     }
     const responseUsers: UserResponseDto[] = [];
     for (const user of users) {
-      const responseUser = new UserResponseDto(user.id, user.email);
+      const responseUser = plainToInstance(UserResponseDto, user, {
+        strategy: 'excludeAll',
+      });
       responseUsers.push(responseUser);
     }
     return responseUsers;
@@ -46,7 +49,9 @@ export class UsersController {
   async findOne(@Param('id') id: string): Promise<UserResponseDto> {
     try {
       const user = await this.usersService.findOne(+id);
-      const responseUser = new UserResponseDto(user.id, user.email);
+      const responseUser = plainToInstance(UserResponseDto, user, {
+        strategy: 'excludeAll',
+      });
       return responseUser;
     } catch (error) {
       throw new NotFoundException('404');
@@ -55,22 +60,32 @@ export class UsersController {
   }
 
   @Post('/')
-  create(@Body() dto: UserRequestDto): Promise<User> {
-    return this.usersService.create(dto);
+  async create(@Body() dto: UserRequestDto): Promise<UserResponseDto> {
+    const user = await this.usersService.create(dto);
+    const responseUser = plainToInstance(UserResponseDto, user, {
+      strategy: 'excludeAll',
+    });
+    return responseUser;
   }
 
   @Put('/:id')
-  update(@Param('id') id: string, @Body() dto: UserRequestDto): Promise<User> {
-    return this.usersService.update(+id, dto);
+  async update(
+    @Param('id') id: string,
+    @Body() dto: UserRequestDto,
+  ): Promise<UserResponseDto> {
+    const user = await this.usersService.update(+id, dto);
+    const responseUser = plainToInstance(UserResponseDto, user, {
+      strategy: 'excludeAll',
+    });
+    return responseUser;
   }
 
   @Delete('/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id') id: string): Promise<string> {
+  async remove(@Param('id') id: string): Promise<void> {
     const removed = await this.usersService.remove(+id);
     if (!removed) {
       throw new NotFoundException(`User with ID "${id}" not found`);
     }
-    return '{}';
   }
 }
