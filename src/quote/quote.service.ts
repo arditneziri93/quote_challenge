@@ -59,7 +59,7 @@ export class QuotesService {
   // Deletes by ID
   async remove(id: number): Promise<boolean> {
     const deleted = await this.repo.delete(id);
-     if (deleted.affected > 0) {
+    if (deleted.affected > 0) {
       return true;
     }
     return false;

@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -16,6 +15,7 @@ import {
 } from '@nestjs/common';
 import { QuotesService } from './quote.service';
 import { Quote } from '../entity/quote.entity';
+import { QuoteRequestDto } from '../dto/quote.dto';
 
 @Controller('quotes')
 export class QuotesController {
@@ -48,16 +48,16 @@ export class QuotesController {
   }
 
   @Post('/')
-  create(@Body() quote: Quote): Promise<Quote> {
-    if (quote.id || quote.id === 0) {
-      throw new BadRequestException('400');
-    }
-    return this.quotesService.create(quote);
+  create(@Body() dto: QuoteRequestDto): Promise<Quote> {
+    return this.quotesService.create(dto);
   }
 
   @Put('/:id')
-  update(@Param('id') id: string, @Body() quote: Quote): Promise<Quote> {
-    return this.quotesService.update(+id, quote);
+  update(
+    @Param('id') id: string,
+    @Body() dto: QuoteRequestDto,
+  ): Promise<Quote> {
+    return this.quotesService.update(+id, dto);
   }
 
   @Delete('/:id')
