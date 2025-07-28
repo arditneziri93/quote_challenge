@@ -1,6 +1,7 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
 /*
 import * as fs from 'fs/promises';
 import * as path from 'path';
@@ -19,6 +20,7 @@ async function bootstrap() {
       transform: true,
     }),
   );
+  app.useGlobalGuards(new JwtAuthGuard(app.get(Reflector)));
   /*
   const quotesService = app.get(QuotesService);
   console.log('✅ Bootstrapping...');

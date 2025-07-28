@@ -17,6 +17,7 @@ import { UsersService } from './user.service';
 import { User } from '../entity/user.entity';
 import { UserRequestDto, UserResponseDto } from '../dto/user.dto';
 import { plainToInstance } from 'class-transformer';
+import { Public } from '../common/decorators/public.decorator';
 
 @Controller('users')
 export class UsersController {
@@ -59,6 +60,7 @@ export class UsersController {
     }
   }
 
+  @Public() // Mark login as public
   @Post('/')
   async create(@Body() dto: UserRequestDto): Promise<UserResponseDto> {
     const user = await this.usersService.create(dto);

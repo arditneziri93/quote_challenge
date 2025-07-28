@@ -4,9 +4,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Quote } from './entity/quote.entity';
 import { UsersModule } from './user/user.module';
 import { User } from './entity/user.entity';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   imports: [
     TypeOrmModule.forRoot({
       type: 'sqlite', // <--- Specify your database type here
@@ -26,6 +26,7 @@ import { User } from './entity/user.entity';
 
     QuotesModule,
     UsersModule,
+    AuthModule,
   ],
 })
 export class AppModule {}

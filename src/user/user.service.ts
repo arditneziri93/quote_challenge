@@ -46,6 +46,12 @@ export class UsersService {
     return result;
   }
 
+  async findByUserEmail(email: string): Promise<User | undefined> {
+    const result = await this.repo.findOne({ where: { email } });
+    if (!result) throw Error('notfound');
+    return result;
+  }
+
   async create(user: Partial<User>): Promise<User> {
     const newUser = this.repo.create(user); // Creates a new entity instance (not yet saved to DB)
     return this.repo.save(newUser); // Saves the instance to the database

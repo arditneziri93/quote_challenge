@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { IsNumber, IsString } from 'class-validator';
 import { Expose } from 'class-transformer';
 
 export class QuoteRequestDto {
@@ -10,6 +10,10 @@ export class QuoteRequestDto {
 }
 
 export class QuoteResponseDto {
+  @IsNumber()
+  @Expose()
+  id: number;
+
   @IsString()
   @Expose()
   quote: string;
