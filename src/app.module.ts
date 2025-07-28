@@ -2,14 +2,17 @@ import { Module } from '@nestjs/common';
 import { QuotesModule } from './quote/quote.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Quote } from './entity/quote.entity';
+import { UsersModule } from './user/user.module';
+import { User } from './entity/user.entity';
 
 @Module({
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   imports: [
     TypeOrmModule.forRoot({
       type: 'sqlite', // <--- Specify your database type here
       database: 'database.sqlite', // <--- Path to your DB file (for SQLite) or database name
 
-      entities: [Quote], // <--- **IMPORTANT:** This array will hold your Entity classes (e.g., [User, Product])
+      entities: [Quote, User], // <--- **IMPORTANT:** This array will hold your Entity classes (e.g., [User, Product])
       //     You can also use a glob pattern like ['dist/**/*.entity{.ts,.js}']
       //     but explicitly listing them is often clearer for smaller projects.
 
@@ -22,6 +25,7 @@ import { Quote } from './entity/quote.entity';
     }),
 
     QuotesModule,
+    UsersModule,
   ],
 })
 export class AppModule {}
