@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../user/user.service'; // Adjust path if needed
-import * as bc from 'bcrypt'; // For password comparison
+import * as bcrypt from 'bcrypt'; // For password comparison
 import { User } from '../entity/user.entity';
 import { UserResponseDto } from '../dto/user.dto';
 import { plainToInstance } from 'class-transformer';
@@ -16,10 +16,12 @@ export class AuthService {
   async validateUser(
     userEmail: string,
     pass: string,
-  ): Promise<UserResponseDto> {
+  ): Promise<UserResponseDto | null> {
     const user: User = await this.userService.findByUserEmail(userEmail); // Assuming you have this method in UserService
+    console.log(user);
     // eslint-disable-next-line
-    const result: boolean = await bc.compare(pass, user.password);
+    const result: boolean = await bcrypt.compare(pass, user.password);
+    console.log(result);
     if (user && result) {
       // Compare hashed password
       const responseUser = plainToInstance(UserResponseDto, user, {

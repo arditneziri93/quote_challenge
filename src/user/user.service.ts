@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { User } from '../entity/user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcrypt'; // For password comparison
 
 @Injectable()
 export class UsersService {
@@ -54,6 +55,8 @@ export class UsersService {
 
   async create(user: Partial<User>): Promise<User> {
     const newUser = this.repo.create(user); // Creates a new entity instance (not yet saved to DB)
+    // eslint-disable-next-line
+    newUser.password = await bcrypt.hash(newUser.password, 10);
     return this.repo.save(newUser); // Saves the instance to the database
   }
 

@@ -17,11 +17,13 @@ import { QuotesService } from './quote.service';
 import { Quote } from '../entity/quote.entity';
 import { QuoteRequestDto, QuoteResponseDto } from '../dto/quote.dto';
 import { plainToInstance } from 'class-transformer';
+import { Public } from '../common/decorators/public.decorator';
 
 @Controller('quotes')
 export class QuotesController {
   constructor(private readonly quotesService: QuotesService) {}
 
+  @Public() // Mark login as public
   @Get('/')
   async findAll(
     @Query('page', new ParseIntPipe({ optional: true })) page?: number,
@@ -45,6 +47,7 @@ export class QuotesController {
     return responseQuotes;
   }
 
+  @Public() // Mark login as public
   @Get('/:id')
   async findOne(@Param('id') id: string): Promise<QuoteResponseDto> {
     try {
