@@ -48,7 +48,6 @@ export class UsersController {
     return responseUsers;
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get('/:id')
   async findOne(@Param('id') id: string): Promise<UserResponseDto> {
     try {
@@ -63,7 +62,6 @@ export class UsersController {
     }
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post('/')
   async create(@Body() dto: UserRequestDto): Promise<UserResponseDto> {
     const user = await this.usersService.create(dto);
@@ -73,7 +71,6 @@ export class UsersController {
     return responseUser;
   }
 
-  @UseGuards(JwtAuthGuard)
   @Put('/:id')
   async update(
     @Param('id') id: string,
@@ -86,7 +83,6 @@ export class UsersController {
     return responseUser;
   }
 
-  @UseGuards(JwtAuthGuard)
   @Delete('/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id') id: string): Promise<void> {

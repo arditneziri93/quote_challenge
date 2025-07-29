@@ -12,18 +12,18 @@ import {
   Post,
   Put,
   Query,
-  UseGuards,
 } from '@nestjs/common';
 import { QuotesService } from './quote.service';
 import { Quote } from '../entity/quote.entity';
 import { QuoteRequestDto, QuoteResponseDto } from '../dto/quote.dto';
 import { plainToInstance } from 'class-transformer';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { Public } from '../common/public.decorator';
 
 @Controller('quotes')
 export class QuotesController {
   constructor(private readonly quotesService: QuotesService) {}
 
+  @Public()
   @Get('/')
   async findAll(
     @Query('page', new ParseIntPipe({ optional: true })) page?: number,
@@ -47,6 +47,7 @@ export class QuotesController {
     return responseQuotes;
   }
 
+  @Public()
   @Get('/:id')
   async findOne(@Param('id') id: string): Promise<QuoteResponseDto> {
     try {
@@ -61,7 +62,6 @@ export class QuotesController {
     }
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post('/')
   async create(@Body() dto: QuoteRequestDto): Promise<QuoteResponseDto> {
     const quote = await this.quotesService.create(dto);
@@ -71,7 +71,6 @@ export class QuotesController {
     return responseQuote;
   }
 
-  @UseGuards(JwtAuthGuard)
   @Put('/:id')
   async update(
     @Param('id') id: string,
@@ -84,7 +83,6 @@ export class QuotesController {
     return responseQuote;
   }
 
-  @UseGuards(JwtAuthGuard)
   @Delete('/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id') id: string): Promise<void> {
