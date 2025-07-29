@@ -47,21 +47,21 @@ export class UsersService {
   }
 
   async create(user: Partial<User>): Promise<User> {
-    const newUser = this.repo.create(user); // Creates a new entity instance (not yet saved to DB)
-    return this.repo.save(newUser); // Saves the instance to the database
+    const newUser = this.repo.create(user);
+    return this.repo.save(newUser);
   }
 
   async update(id: number, user: Partial<User>): Promise<User | undefined> {
-    await this.repo.update(id, user); // Updates by ID directly
-    return this.repo.findOne({ where: { id } }); // Returns the updated user
+    await this.repo.update(id, user);
+    return this.repo.findOne({ where: { id } });
   }
 
-  // Deletes by ID
   async remove(id: number): Promise<boolean> {
     const deleted = await this.repo.delete(id);
-    if (deleted.affected > 0) {
-      return true;
-    }
-    return false;
+    return deleted.affected > 0;
+  }
+
+  async findByUsername(email: string): Promise<User | null> {
+    return this.repo.findOne({ where: { email } });
   }
 }
