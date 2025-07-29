@@ -1,4 +1,15 @@
-import { Controller } from '@nestjs/common';
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import { Controller, Post, UseGuards, Request } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { AuthService } from './auth.service';
 
 @Controller('auth')
-export class AuthController {}
+export class AuthController {
+  constructor(private readonly authService: AuthService) {}
+
+  @UseGuards(AuthGuard('local'))
+  @Post('login')
+  async login(@Request() req) {
+    return this.authService.login(req.user as { id: number; email: string });
+  }
+}
