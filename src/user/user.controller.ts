@@ -12,12 +12,15 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './user.service';
 import { User } from '../entity/user.entity';
 import { UserRequestDto, UserResponseDto } from '../dto/user.dto';
 import { plainToInstance } from 'class-transformer';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -45,6 +48,7 @@ export class UsersController {
     return responseUsers;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('/:id')
   async findOne(@Param('id') id: string): Promise<UserResponseDto> {
     try {
@@ -59,6 +63,7 @@ export class UsersController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('/')
   async create(@Body() dto: UserRequestDto): Promise<UserResponseDto> {
     const user = await this.usersService.create(dto);
@@ -68,6 +73,7 @@ export class UsersController {
     return responseUser;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Put('/:id')
   async update(
     @Param('id') id: string,
@@ -80,6 +86,7 @@ export class UsersController {
     return responseUser;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete('/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id') id: string): Promise<void> {
