@@ -5,10 +5,14 @@ import { Quote } from './entity/quote.entity';
 import { UsersModule } from './user/user.module';
 import { User } from './entity/user.entity';
 import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true, // macht die envs überall verfügbar
+    }),
     TypeOrmModule.forRoot({
       type: 'sqlite', // <--- Specify your database type here
       database: 'database.sqlite', // <--- Path to your DB file (for SQLite) or database name
